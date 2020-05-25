@@ -1,8 +1,8 @@
 from flask import Flask, request, make_response
 import re
 from app import db, bcrypt
-from models.auth_models import user
-from helpers.authentication import generateToken
+from pkg.models.auth_models import user
+from pkg.helpers.authentication import generateToken
 
 class Auth:
     def init(self):
@@ -31,26 +31,36 @@ class Auth:
                 }
             }, 400)
         elif(re.search("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", email)):
-            new_user = user(name, email, password)
+            response = user.query.filter_by(email=email).first()
 
-            db.session.add(new_user)
-            db.session.commit()
-
-            auth_user = {
-                'id': new_user.id,
-                'name': new_user.name,
-                'email': new_user.email,
-            }
-
-            return make_response({
-                'status': 201,
-                'data': {
-                    'user': {
-                        **auth_user,
-                        'token': generateToken(auth_user)
+            if(response):
+                return make_response({
+                    'status': 409,
+                    'data': {
+                        'error': 'User already exists'
                     }
+                }, 409)
+            else:
+                new_user = user(name, email, password)
+
+                db.session.add(new_user)
+                db.session.commit()
+
+                auth_user = {
+                    'id': new_user.id,
+                    'name': new_user.name,
+                    'email': new_user.email,
                 }
-            }, 201)
+
+                return make_response({
+                    'status': 201,
+                    'data': {
+                        'user': {
+                            **auth_user,
+                            'token': generateToken(auth_user)
+                        }
+                    }
+                }, 201)
         else:
             # email is not valid
             return make_response({
