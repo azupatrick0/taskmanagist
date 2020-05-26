@@ -15,6 +15,10 @@ marshmallow-sqlalchemy = "*"
 flask_bcrypt = "*"
 flask-cors = "*"
 flask-jwt-extended = "*"
+gunicorn = "*"
+python-dotenv = "*"
+psycopg2-binary = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.8"
