@@ -1,5 +1,8 @@
 # TaskManagist
 
+## Description
+A management application that helps you manage your tasks
+
 ## Features 
   * Users can create an account and log in 
   * A user can create a task 
